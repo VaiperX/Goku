@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="VaiperX">
+    
+    <link rel="apple-touch-icon" href="https://i.postimg.cc/RZ3NvJ7J/CA2D1786-6D1A-4DAF-98C6-6B5119596AF0.jpg">
+    <link rel="manifest" href="manifest.json">
+
+    <title>VAIPERX DESIGN STUDIO</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --glow-color: #a855f7;
+            --bg-deep: rgba(5, 2, 10, 0.75);
+            --accent-purple: #7c3aed;
+            --text-neon: #d8b4fe;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0; padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        body, html {
+            width: 100%; height: 100%;
+            background-color: #000;
+            overflow: hidden; position: fixed;
+        }
+
+        /* 🎥 วิดีโอพื้นหลัง */
+        .video-background {
+            position: absolute;
+            top: 50%; left: 50%;
+            min-width: 100%; min-height: 100%;
+            width: auto; height: auto;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            z-index: 1;
+        }
+
+        /* หน้าจอต้อนรับ */
+        .welcome-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 999; display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            transition: opacity 0.8s ease;
+        }
+
+        .start-btn {
+            background: linear-gradient(135deg, #a855f7, #6b21a8);
+            color: white; border: none; padding: 15px 40px;
+            font-size: 18px; font-weight: bold; border-radius: 30px;
+            box-shadow: 0 0 20px var(--glow-color); cursor: pointer;
+            text-transform: uppercase; letter-spacing: 2px;
+            transition: transform 0.2s;
+        }
+
+        .start-btn:active { transform: scale(0.95); }
+
+        /* 📱 โครงสร้างแผงควบคุมหลัก */
+        .panel-container {
+            position: relative; z-index: 10;
+            width: 100%; height: 100%;
+            padding: calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom));
+            display: flex; flex-direction: column;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 1.5s ease, transform 1.5s ease;
+            pointer-events: none;
+        }
+
+        .panel-container.show {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        /* Header */
+        .header { text-align: center; margin-bottom: 20px; }
+        .main-title {
+            font-size: 28px; font-weight: 900; color: #fff;
+            text-transform: uppercase; letter-spacing: 4px;
+            text-shadow: 0 0 15px var(--glow-color);
+        }
+        .version-badge {
+            font-size: 10px; color: var(--text-neon);
+            border: 1px solid var(--glow-color);
+            padding: 2px 8px; border-radius: 20px;
+            display: inline-block; margin-top: 5px; background: rgba(0,0,0,0.4);
+        }
+
+        /* Tabs */
+        .nav-tabs {
+            display: flex; gap: 5px; margin-bottom: 20px;
+            overflow-x: auto; padding-bottom: 5px;
+        }
+        .nav-tabs::-webkit-scrollbar { display: none; }
+        .tab-item {
+            background: rgba(30, 10, 50, 0.6);
+            border: 1px solid rgba(168, 85, 247, 0.4);
+            color: #ccc; padding: 10px 18px;
+            border-radius: 12px; font-size: 13px; font-weight: 800;
+            white-space: nowrap; transition: 0.3s;
+            backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+        }
+        .tab-item.active {
+            background: linear-gradient(to bottom, var(--accent-purple), rgba(0,0,0,0.6));
+            color: #fff; border-color: var(--glow-color);
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
+        }
+
+        /* Content Area */
+        .content-area { flex: 1; overflow-y: auto; padding-right: 5px; }
+        .content-area::-webkit-scrollbar { width: 3px; }
+        .content-area::-webkit-scrollbar-thumb { background: var(--glow-color); border-radius: 10px; }
+        .page { display: none; animation: slideIn 0.4s ease-out; }
+        .page.active { display: block; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--bg-deep);
+            border: 1px solid rgba(168, 85, 247, 0.25);
+            border-radius: 15px; padding: 15px; margin-bottom: 15px;
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+        }
+        .card-header {
+            font-size: 14px; font-weight: bold; color: var(--text-neon);
+            margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+        }
+        .item {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .item:last-child { border-bottom: none; }
+        .label-group { display: flex; flex-direction: column; }
+        .label-name { color: #eee; font-size: 14px; font-weight: 600; }
+        .label-desc { color: #aaa; font-size: 11px; margin-top: 2px; }
+
+        /* iOS Switch */
+        .switch { position: relative; width: 50px; height: 28px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: rgba(255,255,255,0.1); transition: .4s; border-radius: 34px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 22px; width: 22px;
+            left: 3px; bottom: 3px; background-color: #fff; transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider { background: linear-gradient(to right, #9333ea, #c084fc); box-shadow: 0 0 10px var(--glow-color); }
+        input:checked + .slider:before { transform: translateX(22px); }
+
+        /* Range Slider */
+        .range-box { padding: 10px 0; }
+        .range-info { display: flex; justify-content: space-between; font-size: 12px; color: #ccc; margin-bottom: 8px; }
+        input[type=range] { -webkit-appearance: none; width: 100%; background: rgba(255,255,255,0.1); height: 6px; border-radius: 5px; }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none; height: 20px; width: 20px; border-radius: 50%;
+            background: #fff; box-shadow: 0 0 10px var(--glow-color); border: 2px solid var(--accent-purple);
+        }
+
+        /* Credits */
+        .credit-container { text-align: center; padding: 20px; }
+        .profile-img {
+            width: 110px; height: 110px; border-radius: 50%;
+            border: 3px solid var(--glow-color); box-shadow: 0 0 20px var(--glow-color); margin-bottom: 15px;
+            object-fit: cover;
+        }
+        .credit-name { font-size: 24px; font-weight: 900; color: #fff; text-shadow: 0 0 10px var(--glow-color); }
+        .tiktok-btn {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            background: #fff; color: #000; padding: 12px 25px;
+            border-radius: 30px; font-weight: 900; text-decoration: none;
+            margin: 20px auto; width: 85%; transition: 0.3s;
+        }
+        .tiktok-btn:active { transform: scale(0.95); box-shadow: 0 0 20px #fff; }
+        .footer-info { text-align: center; font-size: 10px; color: #ccc; margin-top: 20px; text-shadow: 0 1px 2px #000; }
+    </style>
+</head>
+<body>
+
+    <video class="video-background" id="bgVideo" loop playsinline webkit-playsinline muted>
+        <source src="https://media.discordapp.net/attachments/1347319667542327448/1516969887010918482/copy_D13507BA-AF03-47EF-A366-2F7E5305A725.mov?ex=6a3493cd&is=6a33424d&hm=1c7d35b82fba26f191409e19a23af947ac5e5f631bf089df678154bb90fd4f07&" type="video/mp4">
+    </video>
+
+    <div class="welcome-overlay" id="welcomeOverlay">
+        <button class="start-btn" onclick="startPanel()">Tap to Initialize</button>
+        <p style="color: #666; font-size: 12px; margin-top: 15px; letter-spacing: 1px;">LOADING VIDEO & AUDIO SYSTEM</p>
+    </div>
+
+    <div class="panel-container" id="panelContainer">
+        <div class="header">
+            <div class="main-title">VAIPERX PANEL</div>
+            <div class="version-badge">iOS EXCLUSIVE v3.0</div>
+        </div>
+
+        <div class="nav-tabs">
+            <div class="tab-item active" onclick="openPage(event, 'p1')"><i class="fa-solid fa-crosshairs"></i> AIMBOT</div>
+            <div class="tab-item" onclick="openPage(event, 'p2')"><i class="fa-solid fa-shield-virus"></i> SECURITY</div>
+            <div class="tab-item" onclick="openPage(event, 'p3')"><i class="fa-solid fa-gun"></i> WEAPON</div>
+            <div class="tab-item" onclick="openPage(event, 'p4')"><i class="fa-solid fa-user-check"></i> CREDITS</div>
+        </div>
+
+        <div class="content-area">
+            
+            <div id="p1" class="page active">
+                <div class="card">
+                    <div class="card-header"><i class="fa-solid fa-skull"></i> AIM ASSIST INFRASTRUCTURE</div>
+                    <div class="item">
+                        <div class="label-group">
+                            <span class="label-name">ยิงตัวโดนหัว (Body to Head)</span>
+                            <span class="label-desc">ทดสอบการสลับเซนเซอร์พิกัดเป้าหมายไปยังส่วนหัว</span>
+                        </div>
+                        <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+                    </div>
+                    <div class="item">
+                        <div class="label-group">
+                            <span class="label-name">แดงทุกเม็ด (Full Red Mode)</span>
+                            <span class="label-desc">จำลองการเปลี่ยนค่า UI Damage Color เป็นสีแดงล้วน</span>
+                        </div>
+                        <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+                    </div>
+                    <div class="item">
+                        <div class="label-group">
+                            <span class="label-name">เป้าดูด (Magnetic Aim)</span>
+                            <span class="label-desc">คำนวณระยะทางที่สั้นที่สุดเพื่อดึงแกน XY เข้าหาวัตถุ</span>
+                        </div>
+                        <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+                    </div>
+                    <div class="item">
+                        <div class="label-group">
+                            <span class="label-name">ไม่ต้องลาก (Auto Tracking)</span>
+                            <span class="label-desc">ล็อกตำแหน่งเป้าหมายแบบคงที่โดยอ้างอิงจาก Vector</span>
+                        </div>
+                        <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="range-box">
+                        <div class="range-info"><span>Aim Intensity (ระดับความหน่วง)</span><span id="v1">85%</span></div>
+                        <input type="range" min="0" max="100" value="85" oninput="document.getElementById('v1').innerText=this.value+'%'">
+                    </div>
+                </div>
+            </div>
+
+            <div id="p2" class="page">
+                <div class="card">
+                    <div class="card-header" style="color: #4ade80;"><i class="fa-solid fa-user-shield"></i> ANTI-DETECTION LAYER</div>
+                    <div class="item">
+                        <div class="label-group">
+                            <span class="label-name">กันแบน 100% (Anti-Ban)</span>
+                            <span class="label-desc">จำลองการทำงานตรวจจับ Packet หลอกของระบบเซิร์ฟเวอร์</span>
+                        </div>
+                        <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                    </div>
+                    <div class="item">
+                        <div class="label-group">
+                            <span class="label-name">กันดำ (Anti-Blacklist)</span>
+                            <span class="label-desc">บล็อกการส่งประวัติค่าการเล่นที่ผิดปกติกลับไปยังผู้พัฒนา</span>
+                        </div>
+                        <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                    </div>
+                    <div class="item">
+                        <div class="label-group">
+                            <span class="label-name">Bypass Security iOS</span>
+                            <span class="label-desc">จำลองการข้ามขั้นตอนการสแกนความถูกต้องของ Sandbox</span>
+                        </div>
+                        <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                    </div>
+                </div>
+            </div>
+
+            <div id="p3" class="page">
+                <div class="card">
+                    <div class="card-header"><i class="fa-solid fa-bolt"></i> WEAPON VARIABLES</div>
+                    <div class="item">
+                        <div class="label-group">
+                            <span class="label-name">ลดแรงดีด (No Recoil)</span>
+                            <span class="label-desc">ปรับค่าแรงสะท้อนกลับของโมเดลอาวุธให้เป็นศูนย์</span>
+                        </div>
+                        <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+                    </div>
+                    <div class="item">
+                        <div class="label-group">
+                            <span class="label-name">เป้านิ่ง (No Spread)</span>
+                            <span class="label-desc">ควบคุมการกระจายตัวของกลุ่มกระสุน (Bullet Spread)</span>
+                        </div>
+                        <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+                    </div>
+                </div>
+            </div>
+
+            <div id="p4" class="page">
+                <div class="credit-container">
+                    <img src="https://i.postimg.cc/kMf48vwG/0C2A8367-E050-48C2-BF54-1986CC50191C.png" class="profile-img" alt="Vaiperx Profile">
+                    <div class="credit-name">Vaiperx</div>
+                    <p style="color: var(--text-neon); font-size: 13px; font-weight: bold; margin-top: 5px;">DEVELOPER & CREATOR</p>
+                    
+                    <a href="https://www.tiktok.com/@vaiperx28?_r=1&_t=ZS-97IeenRgWsj" class="tiktok-btn" target="_blank">
+                        <i class="fa-brands fa-tiktok"></i> Follow on TikTok
+                    </a>
+
+                    <div style="margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
+                        <p style="color: #aaa; font-size: 12px; font-style: italic;">"จัดทำขึ้นเพื่อการศึกษาการออกแบบหน้าตาโปรแกรมและกลไกวิดีโอบนเว็บบราวเซอร์"</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="footer-info">Device: iOS Mode | Video Engine: HTML5 Core | Designer: Vaiperx</div>
+    </div>
+
+    <script>
+        var video = document.getElementById('bgVideo');
+
+        function startPanel() {
+            video.muted = false;
+            video.play();
+
+            document.getElementById('welcomeOverlay').style.opacity = '0';
+            setTimeout(function() {
+                document.getElementById('welcomeOverlay').style.display = 'none';
+            }, 800);
+
+            setTimeout(function() {
+                document.getElementById('panelContainer').classList.add('show');
+            }, 3000);
+        }
+
+        function openPage(evt, pageName) {
+            var i, page, tablinks;
+            page = document.getElementsByClassName("page");
+            for (i = 0; i < page.length; i++) {
+                page[i].style.display = "none";
+                page[i].classList.remove("active");
+            }
+            tablinks = document.getElementsByClassName("tab-item");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active");
+            }
+            document.getElementById(pageName).style.display = "block";
+            document.getElementById(pageName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        document.addEventListener('touchmove', function(e) {
+            if(e.target.closest('.content-area') === null && e.target.closest('.nav-tabs') === null) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+    </script>
+</body>
+</html>
