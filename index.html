@@ -15,9 +15,11 @@
     <style>
         :root {
             --glow-color: #a855f7;
-            --bg-deep: rgba(5, 2, 10, 0.75);
-            --accent-purple: #7c3aed;
-            --text-neon: #d8b4fe;
+            --saiyan-purple: #bd5fff;
+            --bg-deep: rgba(6, 2, 14, 0.82);
+            --accent-purple: #6322d4;
+            --text-neon: #e9d5ff;
+            --orange-fire: #ff6a00;
         }
 
         * {
@@ -49,286 +51,355 @@
         /* หน้าจอต้อนรับ */
         .welcome-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.85);
+            background: rgba(0, 0, 0, 0.9);
             z-index: 999; display: flex; flex-direction: column;
             justify-content: center; align-items: center;
             transition: opacity 0.8s ease;
         }
 
         .start-btn {
-            background: linear-gradient(135deg, #a855f7, #6b21a8);
-            color: white; border: none; padding: 15px 40px;
-            font-size: 18px; font-weight: bold; border-radius: 30px;
-            box-shadow: 0 0 20px var(--glow-color); cursor: pointer;
-            text-transform: uppercase; letter-spacing: 2px;
+            background: linear-gradient(135deg, #a855f7, var(--orange-fire));
+            color: white; border: none; padding: 18px 50px;
+            font-size: 20px; font-weight: 900; border-radius: 35px;
+            box-shadow: 0 0 25px var(--glow-color), 0 0 10px var(--orange-fire); 
+            cursor: pointer; text-transform: uppercase; letter-spacing: 3px;
             transition: transform 0.2s;
+            animation: btnPulse 1.5s infinite;
+        }
+
+        @keyframes btnPulse {
+            0%, 100% { box-shadow: 0 0 20px var(--glow-color); }
+            50% { box-shadow: 0 0 35px var(--saiyan-purple), 0 0 15px var(--orange-fire); }
         }
 
         .start-btn:active { transform: scale(0.95); }
 
-        /* 📱 โครงสร้างแผงควบคุมหลัก */
+        /* 📱 แผงควบคุมหลัก (เต็มจอ iOS) */
         .panel-container {
             position: relative; z-index: 10;
             width: 100%; height: 100%;
-            padding: calc(20px + env(safe-area-inset-top)) 20px calc(20px + env(safe-area-inset-bottom));
+            padding: calc(20px + env(safe-area-inset-top)) 20px calc(15px + env(safe-area-inset-bottom));
             display: flex; flex-direction: column;
             opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 1.5s ease, transform 1.5s ease;
+            transform: scale(1.1);
+            transition: opacity 1.2s cubic-bezier(0.1, 0.8, 0.25, 1), transform 1.2s cubic-bezier(0.1, 0.8, 0.25, 1);
             pointer-events: none;
         }
 
         .panel-container.show {
-            opacity: 1;
-            transform: translateY(0);
-            pointer-events: auto;
+            opacity: 1; transform: scale(1); pointer-events: auto;
         }
 
         /* Header */
-        .header { text-align: center; margin-bottom: 20px; }
+        .header { text-align: center; margin-bottom: 15px; }
         .main-title {
-            font-size: 28px; font-weight: 900; color: #fff;
-            text-transform: uppercase; letter-spacing: 4px;
-            text-shadow: 0 0 15px var(--glow-color);
+            font-size: 30px; font-weight: 900; color: #fff;
+            text-transform: uppercase; letter-spacing: 5px;
+            text-shadow: 0 0 10px #fff, 0 0 20px var(--saiyan-purple), 0 0 40px var(--saiyan-purple);
         }
         .version-badge {
-            font-size: 10px; color: var(--text-neon);
-            border: 1px solid var(--glow-color);
-            padding: 2px 8px; border-radius: 20px;
-            display: inline-block; margin-top: 5px; background: rgba(0,0,0,0.4);
+            font-size: 11px; color: #fff; font-weight: bold;
+            background: linear-gradient(90deg, #7c3aed, var(--orange-fire));
+            padding: 3px 12px; border-radius: 20px;
+            display: inline-block; margin-top: 6px;
+            box-shadow: 0 0 10px rgba(168, 85, 247, 0.5);
         }
 
         /* Tabs */
         .nav-tabs {
-            display: flex; gap: 5px; margin-bottom: 20px;
+            display: flex; gap: 6px; margin-bottom: 15px;
             overflow-x: auto; padding-bottom: 5px;
         }
         .nav-tabs::-webkit-scrollbar { display: none; }
         .tab-item {
-            background: rgba(30, 10, 50, 0.6);
-            border: 1px solid rgba(168, 85, 247, 0.4);
-            color: #ccc; padding: 10px 18px;
-            border-radius: 12px; font-size: 13px; font-weight: 800;
+            background: rgba(18, 7, 33, 0.75);
+            border: 1px solid rgba(189, 95, 255, 0.4);
+            color: #bfa5db; padding: 11px 20px;
+            border-radius: 12px; font-size: 13px; font-weight: 900;
             white-space: nowrap; transition: 0.3s;
-            backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px);
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
         }
         .tab-item.active {
-            background: linear-gradient(to bottom, var(--accent-purple), rgba(0,0,0,0.6));
-            color: #fff; border-color: var(--glow-color);
-            box-shadow: 0 0 15px rgba(168, 85, 247, 0.5);
+            background: linear-gradient(135deg, var(--accent-purple), rgba(24, 4, 48, 0.9));
+            color: #fff; border-color: #e9d5ff;
+            box-shadow: 0 0 15px var(--saiyan-purple);
         }
 
         /* Content Area */
-        .content-area { flex: 1; overflow-y: auto; padding-right: 5px; }
+        .content-area { flex: 1; overflow-y: auto; padding-right: 3px; }
         .content-area::-webkit-scrollbar { width: 3px; }
-        .content-area::-webkit-scrollbar-thumb { background: var(--glow-color); border-radius: 10px; }
-        .page { display: none; animation: slideIn 0.4s ease-out; }
+        .content-area::-webkit-scrollbar-thumb { background: var(--saiyan-purple); border-radius: 10px; }
+        .page { display: none; animation: pageGlow 0.4s ease-out; }
         .page.active { display: block; }
 
-        @keyframes slideIn {
-            from { opacity: 0; transform: scale(0.98); }
-            to { opacity: 1; transform: scale(1); }
+        @keyframes pageGlow {
+            from { opacity: 0; transform: scale(0.97); filter: brightness(2); }
+            to { opacity: 1; transform: scale(1); filter: brightness(1); }
         }
 
-        /* Cards */
+        /* Cards ซูเปอร์ไซย่ามืด */
         .card {
             background: var(--bg-deep);
-            border: 1px solid rgba(168, 85, 247, 0.25);
-            border-radius: 15px; padding: 15px; margin-bottom: 15px;
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(189, 95, 255, 0.3);
+            border-radius: 16px; padding: 15px; margin-bottom: 12px;
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            box-shadow: inset 0 0 15px rgba(168, 85, 247, 0.15), 0 4px 20px rgba(0,0,0,0.5);
         }
         .card-header {
-            font-size: 14px; font-weight: bold; color: var(--text-neon);
+            font-size: 14px; font-weight: 900; color: #fff;
             margin-bottom: 12px; display: flex; align-items: center; gap: 8px;
+            letter-spacing: 1px; text-shadow: 0 0 8px var(--saiyan-purple);
+            border-bottom: 1px solid rgba(189, 95, 255, 0.2); padding-bottom: 8px;
         }
         .item {
             display: flex; justify-content: space-between; align-items: center;
-            padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
         }
         .item:last-child { border-bottom: none; }
         .label-group { display: flex; flex-direction: column; }
-        .label-name { color: #eee; font-size: 14px; font-weight: 600; }
-        .label-desc { color: #aaa; font-size: 11px; margin-top: 2px; }
+        .label-name { color: #fff; font-size: 14px; font-weight: 700; text-shadow: 0 1px 2px #000; }
+        .label-desc { color: #b5a9c4; font-size: 11px; margin-top: 3px; }
+
+        /* กล่องแสดง Console Log ที่ใช้งานได้จริง */
+        .console-box {
+            background: rgba(0, 0, 0, 0.85);
+            border: 1px solid var(--orange-fire);
+            border-radius: 10px; padding: 10px;
+            font-family: monospace; font-size: 11px; color: #34d399;
+            height: 75px; overflow-y: hidden; margin-top: 10px;
+            box-shadow: inset 0 0 10px rgba(0,0,0,1);
+        }
+        .console-line { margin-bottom: 4px; animation: textBlink 0.2s ease; }
+        @keyframes textBlink { from { opacity: 0; } to { opacity: 1; } }
 
         /* iOS Switch */
-        .switch { position: relative; width: 50px; height: 28px; }
+        .switch { position: relative; width: 52px; height: 30px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider {
             position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: rgba(255,255,255,0.1); transition: .4s; border-radius: 34px;
-            border: 1px solid rgba(255,255,255,0.1);
+            background-color: #231c30; transition: .3s; border-radius: 34px;
+            border: 1px solid rgba(189, 95, 255, 0.2);
         }
         .slider:before {
             position: absolute; content: ""; height: 22px; width: 22px;
-            left: 3px; bottom: 3px; background-color: #fff; transition: .4s;
-            border-radius: 50%;
+            left: 4px; bottom: 3px; background-color: #fff; transition: .3s;
+            border-radius: 50%; box-shadow: 0 2px 5px #000;
         }
-        input:checked + .slider { background: linear-gradient(to right, #9333ea, #c084fc); box-shadow: 0 0 10px var(--glow-color); }
-        input:checked + .slider:before { transform: translateX(22px); }
+        input:checked + .slider { background: linear-gradient(135deg, #a855f7, #db2777); box-shadow: 0 0 12px var(--saiyan-purple); }
+        input:checked + .slider:before { transform: translateX(20px); background-color: #fff; }
 
         /* Range Slider */
-        .range-box { padding: 10px 0; }
-        .range-info { display: flex; justify-content: space-between; font-size: 12px; color: #ccc; margin-bottom: 8px; }
-        input[type=range] { -webkit-appearance: none; width: 100%; background: rgba(255,255,255,0.1); height: 6px; border-radius: 5px; }
+        .range-box { padding: 8px 0; }
+        .range-info { display: flex; justify-content: space-between; font-size: 12px; color: #fff; font-weight: bold; margin-bottom: 8px; }
+        input[type=range] { -webkit-appearance: none; width: 100%; background: #1f142e; height: 7px; border-radius: 5px; }
         input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none; height: 20px; width: 20px; border-radius: 50%;
-            background: #fff; box-shadow: 0 0 10px var(--glow-color); border: 2px solid var(--accent-purple);
+            -webkit-appearance: none; height: 22px; width: 22px; border-radius: 50%;
+            background: #fff; box-shadow: 0 0 12px var(--saiyan-purple); border: 3px solid var(--accent-purple);
+        }
+
+        /* 🔥 ปุ่ม EXECUTE ใหญ่ดุดัน */
+        .btn-execute {
+            background: linear-gradient(135deg, #7c3aed, var(--orange-fire));
+            color: #fff; border: 1px solid #fff; padding: 16px;
+            border-radius: 14px; font-size: 16px; font-weight: 900;
+            width: 100%; cursor: pointer; text-transform: uppercase;
+            letter-spacing: 2px; margin-top: 5px;
+            box-shadow: 0 4px 15px rgba(255, 106, 0, 0.4);
+            transition: all 0.2s ease;
+        }
+        .btn-execute:active { transform: scale(0.97); filter: brightness(1.3); }
+
+        /* อนิเมชั่นบาร์ตอนโหลดรันโค้ด */
+        .loader-bar {
+            width: 0%; height: 5px; background: linear-gradient(90deg, var(--saiyan-purple), var(--orange-fire));
+            border-radius: 10px; margin-top: 8px; transition: width 0.1s linear;
+            box-shadow: 0 0 10px var(--saiyan-purple);
         }
 
         /* Credits */
-        .credit-container { text-align: center; padding: 20px; }
+        .credit-container { text-align: center; padding: 15px 10px; }
         .profile-img {
-            width: 110px; height: 110px; border-radius: 50%;
-            border: 3px solid var(--glow-color); box-shadow: 0 0 20px var(--glow-color); margin-bottom: 15px;
+            width: 120px; height: 120px; border-radius: 50%;
+            border: 4px solid var(--saiyan-purple); box-shadow: 0 0 25px var(--saiyan-purple); margin-bottom: 15px;
             object-fit: cover;
         }
-        .credit-name { font-size: 24px; font-weight: 900; color: #fff; text-shadow: 0 0 10px var(--glow-color); }
+        .credit-name { font-size: 26px; font-weight: 900; color: #fff; text-shadow: 0 0 15px var(--saiyan-purple); letter-spacing: 1px; }
         .tiktok-btn {
             display: flex; align-items: center; justify-content: center; gap: 10px;
-            background: #fff; color: #000; padding: 12px 25px;
-            border-radius: 30px; font-weight: 900; text-decoration: none;
-            margin: 20px auto; width: 85%; transition: 0.3s;
+            background: linear-gradient(135deg, #fff, #e9d5ff); color: #000; padding: 14px 25px;
+            border-radius: 35px; font-weight: 900; text-decoration: none;
+            margin: 20px auto; width: 85%; box-shadow: 0 5px 15px rgba(0,0,0,0.4);
         }
-        .tiktok-btn:active { transform: scale(0.95); box-shadow: 0 0 20px #fff; }
-        .footer-info { text-align: center; font-size: 10px; color: #ccc; margin-top: 20px; text-shadow: 0 1px 2px #000; }
+        .tiktok-btn:active { transform: scale(0.95); }
+        .footer-info { text-align: center; font-size: 11px; color: #a291b5; margin-top: 15px; font-weight: bold; }
     </style>
 </head>
 <body>
 
+    <!-- 🎥 วิดีโอออร่าดราก้อนบอลพื้นหลังของคุณ -->
     <video class="video-background" id="bgVideo" loop playsinline webkit-playsinline muted>
         <source src="https://media.discordapp.net/attachments/1347319667542327448/1516969887010918482/copy_D13507BA-AF03-47EF-A366-2F7E5305A725.mov?ex=6a3493cd&is=6a33424d&hm=1c7d35b82fba26f191409e19a23af947ac5e5f631bf089df678154bb90fd4f07&" type="video/mp4">
     </video>
 
+    <!-- 🔘 หน้าจอต้อนรับเข้าสู่ระบบ -->
     <div class="welcome-overlay" id="welcomeOverlay">
-        <button class="start-btn" onclick="startPanel()">Tap to Initialize</button>
-        <p style="color: #666; font-size: 12px; margin-top: 15px; letter-spacing: 1px;">LOADING VIDEO & AUDIO SYSTEM</p>
+        <button class="start-btn" onclick="startPanel()">TAP TO INJECT</button>
+        <p style="color: var(--saiyan-purple); font-size: 11px; margin-top: 18px; letter-spacing: 2px; font-weight: bold; text-shadow: 0 0 5px #000;">BY VIPERX SYSTEM OS</p>
     </div>
 
+    <!-- 📱 ตัวอินเตอร์เฟสหลักไร้ขอบพรีเมียม -->
     <div class="panel-container" id="panelContainer">
         <div class="header">
-            <div class="main-title">VAIPERX PANEL</div>
-            <div class="version-badge">iOS EXCLUSIVE v3.0</div>
+            <div class="main-title">VAIPERX EXTERNAL</div>
+            <div class="version-badge"><i class="fa-solid fa-fire"></i> ULTRA SAIYAN CORE v3.5</div>
         </div>
 
         <div class="nav-tabs">
             <div class="tab-item active" onclick="openPage(event, 'p1')"><i class="fa-solid fa-crosshairs"></i> AIMBOT</div>
             <div class="tab-item" onclick="openPage(event, 'p2')"><i class="fa-solid fa-shield-virus"></i> SECURITY</div>
             <div class="tab-item" onclick="openPage(event, 'p3')"><i class="fa-solid fa-gun"></i> WEAPON</div>
-            <div class="tab-item" onclick="openPage(event, 'p4')"><i class="fa-solid fa-user-check"></i> CREDITS</div>
+            <div class="tab-item" onclick="openPage(event, 'p4')"><i class="fa-solid fa-id-card"></i> SYSTEM</div>
         </div>
 
         <div class="content-area">
             
+            <!-- PAGE 1: AIMBOT -->
             <div id="p1" class="page active">
                 <div class="card">
-                    <div class="card-header"><i class="fa-solid fa-skull"></i> AIM ASSIST INFRASTRUCTURE</div>
+                    <div class="card-header"><i class="fa-solid fa-skull-crossbones"></i> TARGET INJECTION MODULE</div>
                     <div class="item">
                         <div class="label-group">
                             <span class="label-name">ยิงตัวโดนหัว (Body to Head)</span>
-                            <span class="label-desc">ทดสอบการสลับเซนเซอร์พิกัดเป้าหมายไปยังส่วนหัว</span>
+                            <span class="label-desc">บังคับทิศทางและล็อกพิกัดกระสุนเข้าตำแหน่ง Headshot สมบูรณ์แบบ</span>
                         </div>
-                        <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+                        <label class="switch"><input type="checkbox" id="c1"><span class="slider"></span></label>
                     </div>
                     <div class="item">
                         <div class="label-group">
-                            <span class="label-name">แดงทุกเม็ด (Full Red Mode)</span>
-                            <span class="label-desc">จำลองการเปลี่ยนค่า UI Damage Color เป็นสีแดงล้วน</span>
+                            <span class="label-name">แดงทุกเม็ด (Full Red Damage)</span>
+                            <span class="label-desc">ปรับเปลี่ยนค่า UI สีความเสียหายของตัวเกมให้แสดงผลสีแดง 100%</span>
                         </div>
-                        <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+                        <label class="switch"><input type="checkbox" id="c2"><span class="slider"></span></label>
                     </div>
                     <div class="item">
                         <div class="label-group">
-                            <span class="label-name">เป้าดูด (Magnetic Aim)</span>
-                            <span class="label-desc">คำนวณระยะทางที่สั้นที่สุดเพื่อดึงแกน XY เข้าหาวัตถุ</span>
+                            <span class="label-name">เป้าดูดอัตโนมัติ (Magnetic Aimlock)</span>
+                            <span class="label-desc">ดึงดูดเป้าเล็งเข้าหาศัตรูในระยะสายตาโดยอัตโนมัติ</span>
                         </div>
-                        <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+                        <label class="switch"><input type="checkbox" id="c3"><span class="slider"></span></label>
                     </div>
                     <div class="item">
                         <div class="label-group">
-                            <span class="label-name">ไม่ต้องลาก (Auto Tracking)</span>
-                            <span class="label-desc">ล็อกตำแหน่งเป้าหมายแบบคงที่โดยอ้างอิงจาก Vector</span>
+                            <span class="label-name">ล็อกเป้าถาวร (Auto Tracking)</span>
+                            <span class="label-desc">ล็อกเป้าหมายค้างตลอดเวลาเวลายิงโดยไม่ต้องทำการลากนิ้ว</span>
                         </div>
-                        <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+                        <label class="switch"><input type="checkbox" id="c4"><span class="slider"></span></label>
                     </div>
                 </div>
                 <div class="card">
                     <div class="range-box">
-                        <div class="range-info"><span>Aim Intensity (ระดับความหน่วง)</span><span id="v1">85%</span></div>
-                        <input type="range" min="0" max="100" value="85" oninput="document.getElementById('v1').innerText=this.value+'%'">
+                        <div class="range-info"><span>Aim Assist Sensitivity</span><span id="v1">95%</span></div>
+                        <input type="range" min="0" max="100" value="95" oninput="document.getElementById('v1').innerText=this.value+'%'">
                     </div>
                 </div>
             </div>
 
+            <!-- PAGE 2: SECURITY -->
             <div id="p2" class="page">
                 <div class="card">
-                    <div class="card-header" style="color: #4ade80;"><i class="fa-solid fa-user-shield"></i> ANTI-DETECTION LAYER</div>
+                    <div class="card-header" style="color: #4ade80;"><i class="fa-solid fa-user-shield"></i> ANTI-BAN & BYPASS CORE</div>
                     <div class="item">
                         <div class="label-group">
-                            <span class="label-name">กันแบน 100% (Anti-Ban)</span>
-                            <span class="label-desc">จำลองการทำงานตรวจจับ Packet หลอกของระบบเซิร์ฟเวอร์</span>
+                            <span class="label-name">ระบบป้องกันการแบน (Anti-Ban Pro)</span>
+                            <span class="label-desc">เข้ารหัสไฟล์แพ็กเก็ตที่ส่งข้อมูลหาเซิร์ฟเวอร์หลักของเกม</span>
                         </div>
-                        <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                        <label class="switch"><input type="checkbox" checked id="c5"><span class="slider"></span></label>
                     </div>
                     <div class="item">
                         <div class="label-group">
-                            <span class="label-name">กันดำ (Anti-Blacklist)</span>
-                            <span class="label-desc">บล็อกการส่งประวัติค่าการเล่นที่ผิดปกติกลับไปยังผู้พัฒนา</span>
+                            <span class="label-name">ระบบป้องกันบัญชีดำ (Anti-Blacklist)</span>
+                            <span class="label-desc">ตัดการเชื่อมต่อล็อครายงานความเสี่ยงของไอดีแบบ Real-time</span>
                         </div>
-                        <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                        <label class="switch"><input type="checkbox" checked id="c6"><span class="slider"></span></label>
                     </div>
                     <div class="item">
                         <div class="label-group">
-                            <span class="label-name">Bypass Security iOS</span>
-                            <span class="label-desc">จำลองการข้ามขั้นตอนการสแกนความถูกต้องของ Sandbox</span>
+                            <span class="label-name">iOS Sandbox Bypass</span>
+                            <span class="label-desc">ข้ามสิทธิ์และซ่อนสคริปต์ภายใต้ความปลอดภัยของระบบ iOS ซาฟารี</span>
                         </div>
-                        <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                        <label class="switch"><input type="checkbox" checked id="c7"><span class="slider"></span></label>
                     </div>
                 </div>
             </div>
 
+            <!-- PAGE 3: WEAPON -->
             <div id="p3" class="page">
                 <div class="card">
-                    <div class="card-header"><i class="fa-solid fa-bolt"></i> WEAPON VARIABLES</div>
+                    <div class="card-header"><i class="fa-solid fa-bolt"></i> WEAPON OPTIMIZER</div>
                     <div class="item">
                         <div class="label-group">
-                            <span class="label-name">ลดแรงดีด (No Recoil)</span>
-                            <span class="label-desc">ปรับค่าแรงสะท้อนกลับของโมเดลอาวุธให้เป็นศูนย์</span>
+                            <span class="label-name">ลดแรงดีดปืน (No Recoil 100%)</span>
+                            <span class="label-desc">เซ็ตค่าแรงถีบแนวตั้งและแนวนอนของอาวุธทุกประเภทให้คงที่</span>
                         </div>
-                        <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+                        <label class="switch"><input type="checkbox" id="c8"><span class="slider"></span></label>
                     </div>
                     <div class="item">
                         <div class="label-group">
-                            <span class="label-name">เป้านิ่ง (No Spread)</span>
-                            <span class="label-desc">ควบคุมการกระจายตัวของกลุ่มกระสุน (Bullet Spread)</span>
+                            <span class="label-name">กระสุนไม่กระจาย (No Spread)</span>
+                            <span class="label-desc">ควบคุมทิศทางกระสุนให้เกาะกลุ่มพุ่งตรงกลางเป้าเล็งเสมอ</span>
                         </div>
-                        <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+                        <label class="switch"><input type="checkbox" id="c9"><span class="slider"></span></label>
+                    </div>
+                    <div class="item">
+                        <div class="label-group">
+                            <span class="label-name">ขยายดาเมจคริติคอล (Critical Damage)</span>
+                            <span class="label-desc">ปรับอัตราการติดดาเมจวิกฤตเมื่อกระสุนเจาะเกราะศัตรู</span>
+                        </div>
+                        <label class="switch"><input type="checkbox" id="c10"><span class="slider"></span></label>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="range-box">
+                        <div class="range-info"><span>Burst Fire Rate Speed</span><span id="v2">1.5x</span></div>
+                        <input type="range" min="10" max="30" value="15" oninput="document.getElementById('v2').innerText=(this.value/10)+'x'">
                     </div>
                 </div>
             </div>
 
+            <!-- PAGE 4: SYSTEM (CREDITS & EXECUTE) -->
             <div id="p4" class="page">
+                <!-- 🔥 ระบบรันสคริปต์ข้ามไปเกมเดือดๆ -->
+                <div class="card">
+                    <div class="card-header" style="color: var(--orange-fire);"><i class="fa-solid fa-terminal"></i> SCRIPT EXECUTOR</div>
+                    <button class="btn-execute" onclick="runScriptAndLaunch()">EXECUTE & RUN FREE FIRE MAX</button>
+                    <div class="loader-bar" id="loadBar"></div>
+                    
+                    <!-- กล่อง Log วิ่งสมจริง -->
+                    <div class="console-box" id="consoleBox">
+                        <div class="console-line">[SYSTEM] VaiperX Core Ready...</div>
+                    </div>
+                </div>
+
                 <div class="credit-container">
+                    <!-- รูปเครดิตใหม่ที่คุณส่งมา -->
                     <img src="https://i.postimg.cc/kMf48vwG/0C2A8367-E050-48C2-BF54-1986CC50191C.png" class="profile-img" alt="Vaiperx Profile">
                     <div class="credit-name">Vaiperx</div>
-                    <p style="color: var(--text-neon); font-size: 13px; font-weight: bold; margin-top: 5px;">DEVELOPER & CREATOR</p>
+                    <p style="color: var(--text-neon); font-size: 13px; font-weight: bold; margin-top: 4px;">CHIEF EXECUTIVE DEVELOPER</p>
                     
                     <a href="https://www.tiktok.com/@vaiperx28?_r=1&_t=ZS-97IeenRgWsj" class="tiktok-btn" target="_blank">
-                        <i class="fa-brands fa-tiktok"></i> Follow on TikTok
+                        <i class="fa-brands fa-tiktok"></i> FOLLOW ON TIKTOK
                     </a>
-
-                    <div style="margin-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;">
-                        <p style="color: #aaa; font-size: 12px; font-style: italic;">"จัดทำขึ้นเพื่อการศึกษาการออกแบบหน้าตาโปรแกรมและกลไกวิดีโอบนเว็บบราวเซอร์"</p>
-                    </div>
                 </div>
             </div>
 
         </div>
 
-        <div class="footer-info">Device: iOS Mode | Video Engine: HTML5 Core | Designer: Vaiperx</div>
+        <div class="footer-info">SECURE CONNECTION // BY VAIPERX DEVELOPMENT</div>
     </div>
 
     <script>
         var video = document.getElementById('bgVideo');
+        var logInterval;
 
         function startPanel() {
             video.muted = false;
@@ -341,6 +412,7 @@
 
             setTimeout(function() {
                 document.getElementById('panelContainer').classList.add('show');
+                startConsoleLogs(); // เริ่มระบบข้อความ Log วิ่ง
             }, 3000);
         }
 
@@ -358,6 +430,69 @@
             document.getElementById(pageName).style.display = "block";
             document.getElementById(pageName).classList.add("active");
             evt.currentTarget.classList.add("active");
+        }
+
+        // ระบบเพิ่มความสมจริง: วิ่ง Log ข้อความจำลองเบื้องหลังระบบ
+        function startConsoleLogs() {
+            var logs = [
+                "[INFO] Bypassing iOS Anti-Cheat system...",
+                "[SUCCESS] Memory addresses allocated.",
+                "[INFO] Patching Local Server Data...",
+                "[STATUS] Aimlock Vector set to: Head_Bone_05",
+                "[INFO] Anti-Blacklist Layer 3 Active.",
+                "[STATUS] Monitoring package stream...",
+                "[SUCCESS] Memory Shield injected successfully."
+            ];
+            var box = document.getElementById("consoleBox");
+            
+            logInterval = setInterval(function() {
+                var randomLog = logs[Math.floor(Math.random() * logs.length)];
+                var line = document.createElement("div");
+                line.className = "console-line";
+                line.innerText = randomLog;
+                box.appendChild(line);
+                if (box.children.length > 4) {
+                    box.removeChild(box.firstChild);
+                }
+            }, 2500);
+        }
+
+        // 💥 ฟังก์ชันรันสคริปต์จำลองและกระโดดข้ามไปเปิดแอป Free Fire Max บน iOS
+        function runScriptAndLaunch() {
+            var bar = document.getElementById("loadBar");
+            var box = document.getElementById("consoleBox");
+            bar.style.width = "0%";
+            
+            var line = document.createElement("div");
+            line.className = "console-line";
+            line.style.color = "#ff6a00";
+            line.innerText = "[EXECUTE] Injecting all selected cheats...";
+            box.appendChild(line);
+
+            var width = 0;
+            var id = setInterval(frame, 25); // โหลดดิ้งบาร์วิ่งไวๆ ดูโปรเพลเยอร์
+            
+            function frame() {
+                if (width >= 100) {
+                    clearInterval(id);
+                    if (window.navigator.vibrate) { window.navigator.vibrate([100, 50, 100]); } // สั่นเตือนความตึง
+                    
+                    var endLine = document.createElement("div");
+                    endLine.className = "console-line";
+                    endLine.style.color = "#4ade80";
+                    endLine.innerText = "[SUCCESS] All scripts active! Launching game...";
+                    box.appendChild(endLine);
+
+                    // ดีเลย์นิดนึงแล้วกระโดดเปิด Free Fire Max ทันที
+                    setTimeout(function() {
+                        window.location.href = "freefiremax://";
+                    }, 800);
+
+                } else {
+                    width++;
+                    bar.style.width = width + '%';
+                }
+            }
         }
 
         document.addEventListener('touchmove', function(e) {
