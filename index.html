@@ -7,7 +7,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="VaiperX">
     
-    <link rel="apple-touch-icon" href="https://i.postimg.cc/RZ3NvJ7J/CA2D1786-6D1A-4DAF-98C6-6B5119596AF0.jpg">
+    <!-- 📱 เปลี่ยนไอคอนเมื่อเพิ่มลงหน้าจอหลัก (Apple Touch Icon) เป็นรูปใหม่แล้ว -->
+    <link rel="apple-touch-icon" href="https://img2.pic.in.th/12EA958B-0D15-4747-B5A7-7189389ED2A9.png">
     <link rel="manifest" href="manifest.json">
 
     <title>VAIPERX DESIGN STUDIO - RED EDITION</title>
@@ -424,28 +425,24 @@
     </div>
 
     <script>
-        // 🛑 เพิ่มระบบป้องกันการคลิกขวาและการกดปุ่มลัด (Basic Client-Side Protection)
+        // 🛑 ระบบป้องกันการคลิกขวาและการกดปุ่มลัด
         document.addEventListener('contextmenu', function(e) {
-            e.preventDefault(); // บล็อกการคลิกขวา
+            e.preventDefault();
         });
 
         document.addEventListener('keydown', function(e) {
-            // บล็อก F12
             if (e.keyCode === 123) {
                 e.preventDefault();
                 return false;
             }
-            // บล็อก Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C
             if (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74 || e.keyCode === 67)) {
                 e.preventDefault();
                 return false;
             }
-            // บล็อก Ctrl+U (View Source)
             if (e.ctrlKey && e.keyCode === 85) {
                 e.preventDefault();
                 return false;
             }
-            // บล็อก Cmd+Option+I / Cmd+Option+J (Mac)
             if (e.metaKey && e.altKey && (e.keyCode === 73 || e.keyCode === 74)) {
                 e.preventDefault();
                 return false;
